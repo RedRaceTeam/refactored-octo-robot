@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Liberty Formula · Neue Ära</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+    <!-- Video.js + hls.js -->
+    <link href="https://vjs.zencdn.net/8.16.1/video-js.css" rel="stylesheet" />
+    <script src="https://vjs.zencdn.net/8.16.1/video.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@0.14.17/dist/hls.min.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #0a0a12;
+            font-family: 'Inter', sans-serif;
+            color: #e8e8f0;
+            min-height: 100vh;
+            display: flex;
+            padding: 20px;
+        }
+
+        .sidebar {
+            width: 200px;
+            background: #0f0f18;
+            border: 1px solid #1a1a2e;
+            border-radius: 16px;
+            padding: 20px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            flex-shrink: 0;
+            margin-right: 20px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+            transition: border-color 0.3s ease;
+        }
+        .sidebar:hover { border-color: #2a2a42; }
+
+        .sidebar .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #1a1a2e;
+        }
+
+        .sidebar .brand .logo-img {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .sidebar .brand .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: #e50914;
+            letter-spacing: -0.5px;
+            line-height: 1.1;
+        }
+
+        .sidebar .brand .logo-text span {
+            display: block;
+            font-size: 10px;
+            font-weight: 400;
+            color: #4a4a5a;
+            letter-spacing: 1px;
+        }
+
+        .dropdown-nav { position: relative; }
+
+        .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 10px 14px;
+            background: #12121e;
+            border: 1px solid #2a2a3a;
+            border-radius: 10px;
+            color: #d0d0dd;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .dropdown-toggle:hover {
+            border-color: #3a3a52;
+            background: #18182a;
+        }
+
+        .dropdown-toggle .arrow {
+            transition: transform 0.3s ease;
+            font-size: 12px;
+            color: #5a5a6a;
+        }
+
+        .dropdown-toggle.active .arrow { transform: rotate(180deg); }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            width: 100%;
+            background: #12121e;
+            border: 1px solid #2a2a3a;
+            border-radius: 12px;
+            padding: 6px 0;
+            list-style: none;
+            z-index: 100;
+            animation: dropdown-in 0.25s ease forwards;
+        }
+
+        .dropdown-menu.active { display: block; }
+
+        @keyframes dropdown-in {
+            0% { opacity: 0; transform: translateY(-8px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .dropdown-menu li {
+            padding: 8px 14px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: #8a8a9a;
+            transition: all 0.2s ease;
+            border-radius: 6px;
+            margin: 2px 4px;
+        }
+
+        .dropdown-menu li:hover {
+            background: #1a1a2a;
+            color: #e8e8f0;
+        }
+
+        .dropdown-menu li.active {
+            background: #1a1a2a;
+            color: #e50914;
+        }
+
+        .sidebar .bottom {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding-top: 12px;
+            border-top: 1px solid #1a1a2e;
+        }
+
+        .sidebar .bottom .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            animation: pulse-dot 1.8s ease-in-out infinite;
+        }
+
+        .sidebar .bottom span { font-size: 11px; color: #4a4a5a; }
+
+        .sidebar .bottom .social {
+            display: flex;
+            gap: 12px;
+            margin-top: 4px;
+        }
+
+        .sidebar .bottom .social a {
+            color: #4a4a5a;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.2s ease;
+        }
+
+        .sidebar .bottom .social a:hover { color: #e8e8f0; }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .main {
+            flex: 1;
+            max-width: 1440px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background: #12121e;
+            border: 1px solid #22223a;
+            border-radius: 16px;
+            flex-shrink: 0;
+            transition: border-color 0.3s ease;
+        }
+
+        .header:hover { border-color: #2a2a42; }
+
+        .header .page-title {
+            font-size: 18px;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .header .page-title span {
+            color: #4a4a5a;
+            font-weight: 400;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 13px;
+            color: #7a7a8a;
+        }
+
+        .badge {
+            padding: 4px 14px;
+            background: #1a1a2a;
+            border: 1px solid #2a2a3e;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #9a9aaa;
+            transition: all 0.3s ease;
+        }
+
+        .badge:hover {
+            border-color: #3a3a52;
+            color: #e8e8f0;
+        }
+
+        .badge .live {
+            color: #e50914;
+            font-weight: 600;
+            animation: live-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes live-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .page {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+            animation: page-fade-in 0.4s ease forwards;
+        }
+
+        .page.active { display: flex; }
+
+        @keyframes page-fade-in {
+            0% { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 2.2fr 1.2fr;
+            grid-template-rows: auto auto;
+            gap: 20px;
+            min-height: 500px;
+        }
+
+        .widget {
+            background: #12121e;
+            border: 1px solid #22223a;
+            border-radius: 16px;
+            padding: 20px 22px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            opacity: 0;
+            transform: translateY(16px);
+            animation: widget-appear 0.5s ease forwards;
+        }
+
+        .widget:nth-child(1) { animation-delay: 0.05s; }
+        .widget:nth-child(2) { animation-delay: 0.10s; }
+        .widget:nth-child(3) { animation-delay: 0.15s; }
+        .widget:nth-child(4) { animation-delay: 0.20s; }
+        .widget:nth-child(5) { animation-delay: 0.25s; }
+
+        .widget:hover {
+            border-color: #2e2e4a;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(229, 9, 20, 0.04);
+        }
+
+        .widget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            flex-shrink: 0;
+        }
+
+        .widget-header h3 {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: #7a7a8a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .widget-header h3 .icon {
+            width: 16px;
+            height: 16px;
+            fill: #7a7a8a;
+            transition: fill 0.3s ease;
+        }
+
+        .widget:hover .widget-header h3 .icon { fill: #e50914; }
+
+        .widget-header .meta {
+            font-size: 12px;
+            color: #5a5a6a;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .widget:hover .widget-header .meta { color: #8a8a9a; }
+
+        .widget-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        @keyframes widget-appear {
+            0% { opacity: 0; transform: translateY(16px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .video-widget {
+            grid-column: 1 / 2;
+            grid-row: 1 / 2;
+            padding: 0;
+            background: #0e0e18;
+            border-color: #1a1a2e;
+            position: relative;
+        }
+
+        .video-widget .video-js {
+            width: 100%;
+            height: 100%;
+            min-height: 320px;
+            background: #0a0a12;
+        }
+
+        .map-widget {
+            grid-column: 1 / 2;
+            grid-row: 2 / 3;
+        }
+
+        .map-svg-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 0;
+        }
+
+        .map-svg-wrap svg {
+            width: 100%;
+            height: 100%;
+            max-height: 140px;
+            background: #0a0a14;
+            border-radius: 12px;
+            padding: 6px 0;
+            transition: background 0.4s ease;
+        }
+
+        .map-widget:hover .map-svg-wrap svg { background: #0e0e1a; }
+
+        .track-path {
+            stroke: #2a2a42;
+            stroke-width: 3;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: stroke 0.3s ease;
+        }
+
+        .map-widget:hover .track-path { stroke: #3a3a52; }
+
+        .track-line {
+            stroke: #e50914;
+            stroke-width: 4;
+            stroke-linecap: round;
+        }
+
+        .car-dot {
+            r: 6;
+            stroke: #0a0a12;
+            stroke-width: 2;
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .car-dot.p1 { fill: #e50914; }
+        .car-dot.p2 { fill: #f59e0b; }
+        .car-dot.p3 { fill: #22c55e; }
+
+        .telemetry-widget {
+            grid-column: 2 / 3;
+            grid-row: 1 / 2;
+        }
+
+        .telemetry-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding-right: 4px;
+        }
+
+        .telemetry-list::-webkit-scrollbar { width: 3px; }
+        .telemetry-list::-webkit-scrollbar-track { background: transparent; }
+        .telemetry-list::-webkit-scrollbar-thumb { background: #2a2a42; border-radius: 6px; }
+
+        .telemetry-row {
+            display: flex;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 8px;
+            background: #0e0e1a;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            gap: 12px;
+            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .telemetry-row:hover {
+            background: #18182a;
+            transform: translateX(4px);
+        }
+
+        .telemetry-row .pos {
+            width: 24px;
+            font-weight: 600;
+            color: #6a6a7a;
+            text-align: right;
+            transition: color 0.3s ease;
+        }
+
+        .telemetry-row:hover .pos { color: #e8e8f0; }
+
+        .telemetry-row .driver {
+            flex: 1;
+            font-weight: 500;
+            color: #d0d0dd;
+            transition: color 0.3s ease;
+        }
+
+        .telemetry-row:hover .driver { color: #fff; }
+
+        .telemetry-row .gap {
+            font-size: 12px;
+            color: #7a7a8a;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .telemetry-row:hover .gap { color: #a0a0b0; }
+
+        .telemetry-row .color-bar {
+            width: 3px;
+            height: 20px;
+            border-radius: 4px;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .telemetry-row:hover .color-bar { width: 4px; }
+
+        .ai-widget {
+            grid-column: 2 / 3;
+            grid-row: 2 / 3;
+        }
+
+        .ai-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-height: 0;
+        }
+
+        .ai-message {
+            background: #0e0e1a;
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #d8d8e5;
+            flex: 1;
+            overflow-y: auto;
+            border-left: 3px solid #e50914;
+            transition: all 0.3s ease;
+        }
+
+        .ai-message:hover {
+            background: #14142a;
+            border-left-color: #ff2d2d;
+        }
+
+        .ai-message .label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: #5a5a6a;
+            margin-bottom: 6px;
+            transition: color 0.3s ease;
+        }
+
+        .ai-message:hover .label { color: #8a8a9a; }
+
+        .ai-actions {
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            padding: 8px 18px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            background: #1e1e32;
+            color: #c0c0d0;
+        }
+
+        .btn-primary {
+            background: #e50914;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #c40812;
+            transform: scale(1.04);
+            box-shadow: 0 4px 20px rgba(229, 9, 20, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: #2a2a42;
+            transform: scale(1.04);
+        }
+
+        .telegram-widget {
+            grid-column: 1 / 2;
+            grid-row: 3 / 4;
+            background: #12121e;
+            border: 1px solid #22223a;
+            border-radius: 16px;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            flex-direction: row;
+            gap: 16px;
+        }
+
+        .telegram-widget:hover {
+            border-color: #2e2e4a;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .telegram-widget .tg-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .telegram-widget .tg-icon {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            fill: #e8e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .telegram-widget:hover .tg-icon {
+            fill: #e50914;
+            transform: scale(1.05);
+        }
+
+        .telegram-widget .tg-text .title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #e8e8f0;
+            transition: color 0.3s ease;
+        }
+
+        .telegram-widget:hover .tg-text .title { color: #fff; }
+
+        .telegram-widget .tg-text .subtitle {
+            font-size: 13px;
+            color: #7a7a8a;
+        }
+
+        .telegram-widget .tg-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: #1e1e32;
+            border: 1px solid #2a2a3e;
+            border-radius: 40px;
+            color: #c0c0d0;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            flex-shrink: 0;
+        }
+
+        .telegram-widget .tg-button:hover {
+            background: #e50914;
+            border-color: #e50914;
+            color: #fff;
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(229, 9, 20, 0.3);
+        }
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        .admin-card {
+            background: #12121e;
+            border: 1px solid #22223a;
+            border-radius: 16px;
+            padding: 20px 22px;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .admin-card:hover {
+            border-color: #2e2e4a;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .admin-card .number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #e8e8f0;
+            margin-bottom: 4px;
+            transition: color 0.3s ease;
+        }
+
+        .admin-card:hover .number { color: #e50914; }
+
+        .admin-card .label {
+            font-size: 13px;
+            color: #7a7a8a;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .admin-card .trend {
+            font-size: 12px;
+            margin-top: 8px;
+            color: #22c55e;
+            transition: opacity 0.3s ease;
+        }
+
+        .admin-card:hover .trend { opacity: 0.8; }
+
+        .admin-table {
+            background: #12121e;
+            border: 1px solid #22223a;
+            border-radius: 16px;
+            padding: 20px 22px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .admin-table:hover { border-color: #2e2e4a; }
+
+        .admin-table table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .admin-table th {
+            text-align: left;
+            color: #5a5a6a;
+            font-weight: 500;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 10px 8px 8px 0;
+            border-bottom: 1px solid #1a1a2e;
+            transition: color 0.3s ease;
+        }
+
+        .admin-table:hover th { color: #7a7a8a; }
+
+        .admin-table td {
+            padding: 10px 8px 10px 0;
+            border-bottom: 1px solid #0e0e1a;
+            color: #c0c0d0;
+            transition: color 0.3s ease;
+        }
+
+        .admin-table tr:last-child td { border-bottom: none; }
+        .admin-table tr { transition: all 0.2s ease; }
+        .admin-table tr:hover td { color: #e8e8f0; }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .status-badge.green {
+            background: #064e3b;
+            color: #22c55e;
+        }
+
+        .status-badge.yellow {
+            background: #4a3a0a;
+            color: #f59e0b;
+        }
+
+        .status-badge.red {
+            background: #4a0a0a;
+            color: #e50914;
+        }
+
+        .admin-card:hover .status-badge { transform: scale(1.05); }
+
+        .admin-controls {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .admin-controls .btn { padding: 10px 24px; }
+        .admin-controls .btn:hover { transform: scale(1.04); }
+
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fade-in 0.3s ease;
+        }
+
+        .login-overlay.hidden { display: none; }
+
+        @keyframes fade-in {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .login-box {
+            background: #12121e;
+            border: 1px solid #2a2a3a;
+            border-radius: 20px;
+            padding: 40px;
+            width: 360px;
+            max-width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .login-box h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #e50914;
+            margin-bottom: 8px;
+        }
+
+        .login-box .sub {
+            color: #6a6a7a;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0e0e1a;
+            border: 1px solid #2a2a3a;
+            border-radius: 10px;
+            color: #e8e8f0;
+            font-size: 14px;
+            margin-bottom: 12px;
+            transition: border-color 0.3s ease;
+            outline: none;
+        }
+
+        .login-box input:focus {
+            border-color: #e50914;
+        }
+
+        .login-box input::placeholder {
+            color: #4a4a5a;
+        }
+
+        .login-box .error {
+            color: #e50914;
+            font-size: 13px;
+            margin-bottom: 12px;
+            min-height: 20px;
+        }
+
+        .login-box .btn {
+            width: 100%;
+            padding: 12px;
+            font-size: 15px;
+            border-radius: 10px;
+        }
+
+        .copyright {
+            margin-top: 8px;
+            padding: 12px 0 4px 0;
+            border-top: 1px solid #1a1a2e;
+            text-align: center;
+            font-size: 11px;
+            color: #4a4a5a;
+            transition: color 0.3s ease;
+        }
+
+        .copyright:hover { color: #6a6a7a; }
+
+        @media (max-width: 1024px) {
+            .grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+                min-height: auto;
+            }
+            .video-widget { grid-column: 1; grid-row: auto; min-height: 200px; }
+            .map-widget { grid-column: 1; grid-row: auto; }
+            .telemetry-widget { grid-column: 1; grid-row: auto; }
+            .ai-widget { grid-column: 1; grid-row: auto; }
+            .telegram-widget { grid-column: 1; grid-row: auto; flex-direction: column; align-items: flex-start; }
+            .admin-grid { grid-template-columns: 1fr 1fr; }
+            .sidebar { width: 160px; padding: 16px; }
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 12px;
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                padding: 12px 16px;
+                margin-right: 0;
+                margin-bottom: 12px;
+                position: static;
+                height: auto;
+                gap: 12px;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .sidebar .brand .logo-text span { display: none; }
+            .sidebar .bottom { display: none; }
+            .dropdown-menu { position: static; width: 100%; }
+            .header {
+                flex-wrap: wrap;
+                gap: 10px;
+                padding: 14px 18px;
+            }
+            .header .page-title { font-size: 15px; }
+            .widget { padding: 16px 18px; }
+            .telemetry-row {
+                font-size: 12px;
+                padding: 4px 8px;
+                gap: 8px;
+            }
+            .ai-message {
+                font-size: 13px;
+                padding: 12px 14px;
+            }
+            .btn {
+                font-size: 12px;
+                padding: 6px 14px;
+            }
+            .telegram-widget {
+                padding: 16px 18px;
+                gap: 12px;
+            }
+            .telegram-widget .tg-icon {
+                width: 32px;
+                height: 32px;
+            }
+            .admin-grid { grid-template-columns: 1fr; }
+            .admin-card .number { font-size: 26px; }
+            .admin-table {
+                padding: 14px 16px;
+                font-size: 13px;
+                overflow-x: auto;
+            }
+            .admin-controls { flex-direction: column; }
+            .login-box { padding: 24px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== LOGIN ===== -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-box">
+            <h2>🔐 Admin Access</h2>
+            <div class="sub">Введите логин и пароль</div>
+            <input type="text" id="loginUsername" placeholder="Логин" />
+            <input type="password" id="loginPassword" placeholder="Пароль" />
+            <div class="error" id="loginError"></div>
+            <button class="btn btn-primary" onclick="handleLogin()">Войти</button>
+        </div>
+    </div>
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar">
+        <div class="brand">
+            <img class="logo-img" src="https://i.ibb.co/whyNqMVj/IMG-20260814-084002-485.jpg" alt="Liberty Formula logo">
+            <div class="logo-text">Liberty<span>Formula</span></div>
+        </div>
+
+        <div class="dropdown-nav">
+            <button class="dropdown-toggle" id="navToggle">
+                <span id="currentPage">Dashboard</span>
+                <span class="arrow">▾</span>
+            </button>
+            <ul class="dropdown-menu" id="navMenu">
+                <li data-page="dashboard" class="active">Dashboard</li>
+                <li data-page="admin">Admin Panel</li>
+            </ul>
+        </div>
+
+        <div class="bottom">
+            <div class="status-dot" id="statusDot"></div>
+            <span id="statusText">Online</span>
+            <div class="social">
+                <a href="https://t.me/P4Devl" target="_blank" title="Telegram">📱</a>
+                <a href="https://github.com/RedRaceTeam" target="_blank" title="GitHub">🐙</a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ===== MAIN ===== -->
+    <div class="main">
+
+        <header class="header">
+            <div class="page-title" id="pageTitle">Dashboard <span>· overview</span></div>
+            <div class="header-right">
+                <span class="badge"><span class="live">●</span> Live</span>
+                <span class="badge" id="sessionBadge">🇦🇹 GP Austria · R1</span>
+            </div>
+        </header>
+
+        <!-- ===== DASHBOARD ===== -->
+        <div class="page active" id="page-dashboard">
+
+            <div class="grid">
+
+                <!-- VIDEO -->
+                <div class="widget video-widget">
+                    <video id="player" class="video-js vjs-default-skin" controls playsinline></video>
+                </div>
+
+                <!-- MAP -->
+                <div class="widget map-widget">
+                    <div class="widget-header">
+                        <h3>
+                            <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
+                            Track Map
+                        </h3>
+                        <span class="meta">Live positions</span>
+                    </div>
+                    <div class="map-svg-wrap">
+                        <svg viewBox="0 0 800 160" preserveAspectRatio="xMidYMid meet">
+                            <path class="track-path" d="M 80 120 C 80 40 180 30 280 40 C 380 50 420 110 520 110 C 620 110 680 50 740 50 C 780 50 780 120 720 120 C 660 120 600 80 500 80 C 400 80 360 140 260 140 C 160 140 80 120 80 120 Z" />
+                            <line class="track-line" x1="80" y1="120" x2="120" y2="120" />
+                            <circle class="car-dot p1" cx="280" cy="70" />
+                            <circle class="car-dot p2" cx="520" cy="95" />
+                            <circle class="car-dot p3" cx="660" cy="70" />
+                            <circle class="car-dot p1" cx="180" cy="50" opacity="0.5" />
+                            <circle class="car-dot p2" cx="620" cy="100" opacity="0.5" />
+                            <text x="400" y="80" text-anchor="middle" fill="#3a3a52" font-size="14" font-family="Inter, sans-serif" id="mapFallback">Ожидание данных</text>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- TELEMETRY -->
+                <div class="widget telemetry-widget">
+                    <div class="widget-header">
+                        <h3>
+                            <svg class="icon" viewBox="0 0 24 24"><path d="M21 6h-2v2h-2V6h-2V4h2V2h2v2h2v2zm-10 3c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm0 4c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                            Live Telemetry
+                        </h3>
+                        <span class="meta" id="telemetryTime">—</span>
+                    </div>
+                    <div class="telemetry-list" id="telemetryList">
+                        <div style="color:#4a4a5a; text-align:center; padding:20px; font-size:13px;">
+                            <span style="display:block; font-size:24px; margin-bottom:8px;">📡</span>
+                            Ожидание данных телеметрии...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI -->
+                <div class="widget ai-widget">
+                    <div class="widget-header">
+                        <h3>
+                            <svg class="icon" viewBox="0 0 24 24"><path d="M12 2a4 4 0 0 0-4 4c0 1.77.96 2.77 1.99 4.21C11.12 12.7 12 13.8 12 16c0 2.2-.88 3.3-1.99 4.79C9.96 22.23 9 23.23 9 25h6c0-1.77-.96-2.77-1.99-4.21C12.88 19.3 12 18.2 12 16c0-2.2.88-3.3 1.99-4.79C14.04 9.77 15 8.77 15 7a4 4 0 0 0-3-3.85V2h-3v1.15A4 4 0 0 0 12 2z"/></svg>
+                            Nico · AI Commentary
+                        </h3>
+                        <span class="meta">Gemini 3.6 Flash</span>
+                    </div>
+                    <div class="ai-content">
+                        <div class="ai-message" id="aiMessage">
+                            <div class="label">💬 Live Analysis</div>
+                            <div id="aiText">Нажми «Generate» для AI-комментария</div>
+                        </div>
+                        <div class="ai-actions">
+                            <button class="btn btn-primary" onclick="generateCommentary()">Generate</button>
+                            <button class="btn btn-secondary" onclick="refreshTelemetry()">Refresh</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TELEGRAM -->
+                <div class="telegram-widget">
+                    <div class="tg-left">
+                        <svg class="tg-icon" viewBox="0 0 24 24">
+                            <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                        </svg>
+                        <div class="tg-text">
+                            <span class="title">P4/9 · Канал Разработчика</span>
+                            <span class="subtitle">Open Source · Python · F1 · C++</span>
+                        </div>
+                    </div>
+                    <a href="https://t.me/P4Devl" target="_blank" class="tg-button">
+                        <span>📱</span> Перейти
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ===== ADMIN PAGE ===== -->
+        <div class="page" id="page-admin">
+
+            <div class="admin-grid">
+                <div class="admin-card">
+                    <div class="number" id="totalUsers">0</div>
+                    <div class="label">Total Users</div>
+                    <div class="trend">↑ active accounts</div>
+                </div>
+                <div class="admin-card">
+                    <div class="number" id="onlineUsers">0</div>
+                    <div class="label">Online Now</div>
+                    <div class="trend">↑ live connections</div>
+                </div>
+                <div class="admin-card">
+                    <div class="number" id="uptimePercent">99%</div>
+                    <div class="label">Uptime</div>
+                    <div class="trend" style="color:#22c55e;">● operational</div>
+                </div>
+            </div>
+
+            <!-- ===== USERS MANAGEMENT ===== -->
+            <div class="admin-table">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                    <h3 style="color:#7a7a8a; font-size:13px; text-transform:uppercase; letter-spacing:0.5px;">👤 Users</h3>
+                    <div style="display:flex; gap:8px;">
+                        <input type="text" id="userLoginInput" placeholder="Логин" style="padding:6px 12px; background:#0e0e1a; border:1px solid #2a2a3a; border-radius:8px; color:#e8e8f0; font-size:13px; outline:none;" />
+                        <input type="text" id="userPasswordInput" placeholder="Пароль" style="padding:6px 12px; background:#0e0e1a; border:1px solid #2a2a3a; border-radius:8px; color:#e8e8f0; font-size:13px; outline:none;" />
+                        <input type="text" id="userRoleInput" placeholder="Роль (user/admin)" style="padding:6px 12px; background:#0e0e1a; border:1px solid #2a2a3a; border-radius:8px; color:#e8e8f0; font-size:13px; outline:none;" />
+                        <button class="btn btn-primary" onclick="addUser()">+</button>
+                    </div>
+                </div>
+                <div id="usersList">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Last Activity</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr><td colspan="5" style="text-align:center; color:#4a4a5a; padding:20px;">Загрузка пользователей...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ===== SOURCES ===== -->
+            <div class="admin-table">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                    <h3 style="color:#7a7a8a; font-size:13px; text-transform:uppercase; letter-spacing:0.5px;">🎥 Video Sources</h3>
+                    <div style="display:flex; gap:8px;">
+                        <input type="text" id="sourceNameInput" placeholder="Название" style="padding:6px 12px; background:#0e0e1a; border:1px solid #2a2a3a; border-radius:8px; color:#e8e8f0; font-size:13px; outline:none;" />
+                        <input type="text" id="sourceUrlInput" placeholder="URL" style="padding:6px 12px; background:#0e0e1a; border:1px solid #2a2a3a; border-radius:8px; color:#e8e8f0; font-size:13px; outline:none; width:300px;" />
+                        <button class="btn btn-primary" onclick="addSource()">+</button>
+                    </div>
+                </div>
+                <div id="sourcesList">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Название</th>
+                                <th>URL</th>
+                                <th>Активный</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sourcesTableBody">
+                            <tr><td colspan="4" style="text-align:center; color:#4a4a5a; padding:20px;">Загрузка источников...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="admin-controls">
+                <button class="btn btn-primary" onclick="refreshTelemetry()">🔄 Refresh Data</button>
+                <button class="btn btn-secondary" onclick="exportData()">📤 Export Logs</button>
+                <button class="btn btn-secondary" onclick="logout()">🚪 Logout</button>
+            </div>
+
+        </div>
+
+        <!-- COPYRIGHT -->
+        <div class="copyright">
+            © 2026 P4/9 · Все права защищены
+        </div>
+
+    </div>
+
+    <script>
+        // ===== API =====
+        const API = {
+            async getUsers() {
+                const res = await fetch('/api/users');
+                return res.json();
+            },
+            async addUser(user) {
+                const res = await fetch('/api/users', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(user)
+                });
+                return res.json();
+            },
+            async deleteUser(username) {
+                const res = await fetch(`/api/users/${username}`, { method: 'DELETE' });
+                return res.json();
+            },
+            async getSources() {
+                const res = await fetch('/api/sources');
+                return res.json();
+            },
+            async addSource(source) {
+                const res = await fetch('/api/sources', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(source)
+                });
+                return res.json();
+            },
+            async deleteSource(id) {
+                const res = await fetch(`/api/sources/${id}`, { method: 'DELETE' });
+                return res.json();
+            },
+            async setActiveSource(id) {
+                const res = await fetch(`/api/sources/${id}/active`, { method: 'PUT' });
+                return res.json();
+            },
+            async login(username, password) {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                return res.json();
+            },
+            async getSession() {
+                const res = await fetch('/api/session');
+                return res.json();
+            }
+        };
+
+        // ===== AUTH =====
+        let currentUser = null;
+
+        async function handleLogin() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorEl = document.getElementById('loginError');
+
+            if (!username || !password) {
+                errorEl.textContent = 'Введите логин и пароль';
+                return;
+            }
+
+            try {
+                const result = await API.login(username, password);
+                if (result.status === 'ok') {
+                    currentUser = result.user;
+                    sessionStorage.setItem('liberty_user', JSON.stringify(currentUser));
+                    document.getElementById('loginOverlay').classList.add('hidden');
+                    errorEl.textContent = '';
+                    document.getElementById('loginUsername').value = '';
+                    document.getElementById('loginPassword').value = '';
+                    loadAllData();
+                } else {
+                    errorEl.textContent = result.message || 'Неверный логин или пароль';
+                }
+            } catch (e) {
+                errorEl.textContent = 'Ошибка соединения';
+            }
+        }
+
+        document.getElementById('loginPassword').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') handleLogin();
+        });
+        document.getElementById('loginUsername').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') handleLogin();
+        });
+
+        function checkAuth() {
+            const saved = sessionStorage.getItem('liberty_user');
+            if (saved) {
+                try {
+                    currentUser = JSON.parse(saved);
+                    document.getElementById('loginOverlay').classList.add('hidden');
+                    loadAllData();
+                    return true;
+                } catch (e) {
+                    sessionStorage.removeItem('liberty_user');
+                }
+            }
+            return false;
+        }
+
+        function logout() {
+            sessionStorage.removeItem('liberty_user');
+            currentUser = null;
+            document.getElementById('loginOverlay').classList.remove('hidden');
+        }
+
+        // ===== LOAD DATA =====
+        async function loadAllData() {
+            await loadUsers();
+            await loadSources();
+            await loadSession();
+        }
+
+        // ===== USERS =====
+        async function loadUsers() {
+            try {
+                const data = await API.getUsers();
+                const tbody = document.getElementById('usersTableBody');
+                if (!tbody) return;
+
+                if (!data.users || data.users.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#4a4a5a; padding:20px;">Пользователей пока нет</td></tr>`;
+                    document.getElementById('totalUsers').textContent = '0';
+                    return;
+                }
+
+                document.getElementById('totalUsers').textContent = data.users.length;
+                const online = data.users.filter(u => u.status === 'active').length;
+                document.getElementById('onlineUsers').textContent = online;
+
+                let html = '';
+                data.users.forEach(user => {
+                    const statusClass = user.status === 'active' ? 'green' : user.status === 'idle' ? 'yellow' : 'red';
+                    const statusText = user.status === 'active' ? 'Active' : user.status === 'idle' ? 'Idle' : 'Offline';
+                    const isCurrent = user.username === currentUser?.username;
+                    html += `
+                        <tr>
+                            <td>${user.username} ${isCurrent ? '👑' : ''}</td>
+                            <td>${user.role}</td>
+                            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                            <td>${user.lastActivity || '—'}</td>
+                            <td>
+                                ${!isCurrent ? `<button class="btn btn-secondary" style="padding:4px 12px; font-size:12px;" onclick="deleteUser('${user.username}')">🗑️</button>` : ''}
+                            </td>
+                        </tr>
+                    `;
+                });
+                tbody.innerHTML = html;
+            } catch (e) {
+                console.error('Load users error:', e);
+            }
+        }
+
+        async function addUser() {
+            const login = document.getElementById('userLoginInput').value.trim();
+            const password = document.getElementById('userPasswordInput').value.trim();
+            const role = document.getElementById('userRoleInput').value.trim() || 'user';
+
+            if (!login || !password) {
+                alert('Введите логин и пароль');
+                return;
+            }
+
+            try {
+                await API.addUser({ username: login, password, role });
+                document.getElementById('userLoginInput').value = '';
+                document.getElementById('userPasswordInput').value = '';
+                document.getElementById('userRoleInput').value = '';
+                await loadUsers();
+            } catch (e) {
+                alert('Ошибка добавления пользователя');
+            }
+        }
+
+        async function deleteUser(username) {
+            if (!confirm(`Удалить пользователя ${username}?`)) return;
+            try {
+                await API.deleteUser(username);
+                await loadUsers();
+            } catch (e) {
+                alert('Ошибка удаления');
+            }
+        }
+
+        // ===== SOURCES =====
+        async function loadSources() {
+            try {
+                const data = await API.getSources();
+                const tbody = document.getElementById('sourcesTableBody');
+                if (!tbody) return;
+
+                if (!data.sources || data.sources.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#4a4a5a; padding:20px;">Источников пока нет</td></tr>`;
+                    return;
+                }
+
+                let html = '';
+                data.sources.forEach((source, index) => {
+                    const activeBadge = source.active ?
+                        '<span class="status-badge green">Active</span>' :
+                        '<span class="status-badge yellow">Inactive</span>';
+                    html += `
+                        <tr>
+                            <td>${source.name}</td>
+                            <td style="font-size:12px; color:#6a6a7a;">${source.url}</td>
+                            <td>${activeBadge}</td>
+                            <td>
+                                <button class="btn btn-secondary" style="padding:4px 12px; font-size:12px;" onclick="setActiveSource(${source.id})">🎯</button>
+                                <button class="btn btn-secondary" style="padding:4px 12px; font-size:12px;" onclick="deleteSource(${source.id})">🗑️</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                tbody.innerHTML = html;
+            } catch (e) {
+                console.error('Load sources error:', e);
+            }
+        }
+
+        async function addSource() {
+            const name = document.getElementById('sourceNameInput').value.trim();
+            const url = document.getElementById('sourceUrlInput').value.trim();
+
+            if (!name || !url) {
+                alert('Введите название и URL');
+                return;
+            }
+
+            try {
+                await API.addSource({ name, url });
+                document.getElementById('sourceNameInput').value = '';
+                document.getElementById('sourceUrlInput').value = '';
+                await loadSources();
+            } catch (e) {
+                alert('Ошибка добавления источника');
+            }
+        }
+
+        async function setActiveSource(id) {
+            try {
+                await API.setActiveSource(id);
+                await loadSources();
+                // Обновляем плеер
+                const sources = await API.getSources();
+                const active = sources.sources.find(s => s.active);
+                if (active && player) {
+                    player.src({ src: active.url, type: 'application/x-mpegURL' });
+                    player.load();
+                }
+            } catch (e) {
+                alert('Ошибка переключения');
+            }
+        }
+
+        async function deleteSource(id) {
+            if (!confirm('Удалить источник?')) return;
+            try {
+                await API.deleteSource(id);
+                await loadSources();
+            } catch (e) {
+                alert('Ошибка удаления');
+            }
+        }
+
+        // ===== SESSION =====
+        async function loadSession() {
+            try {
+                const data = await API.getSession();
+                if (data.status === 'ok' && data.session) {
+                    document.getElementById('sessionBadge').textContent = 
+                        `${data.session.flag || '🏁'} ${data.session.name || 'GP'} · ${data.session.year || '2026'}`;
+                }
+            } catch (e) {
+                console.error('Session error:', e);
+            }
+        }
+
+        // ===== VIDEO PLAYER =====
+        let player;
+
+        function initPlayer(src) {
+            if (player) {
+                player.dispose();
+            }
+
+            const defaultSrc = src || 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
+
+            player = videojs('player', {
+                controls: true,
+                autoplay: false,
+                fluid: true,
+                responsive: true,
+                preload: 'auto',
+                sources: [{ src: defaultSrc, type: 'application/x-mpegURL' }]
+            });
+
+            return player;
+        }
+
+        // ===== TELEMETRY =====
+        let ws = null;
+
+        function connectWebSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws`;
+
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                document.getElementById('statusDot').style.background = '#22c55e';
+                document.getElementById('statusText').textContent = 'Online';
+            };
+
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    if (data.type === 'telemetry') {
+                        updateTelemetry(data);
+                        updateMap(data);
+                    }
+                } catch (e) {
+                    console.error('WebSocket error:', e);
+                }
+            };
+
+            ws.onclose = () => {
+                document.getElementById('statusDot').style.background = '#e50914';
+                document.getElementById('statusText').textContent = 'Offline';
+                setTimeout(connectWebSocket, 3000);
+            };
+        }
+
+        function updateTelemetry(data) {
+            const list = document.getElementById('telemetryList');
+            const time = document.getElementById('telemetryTime');
+
+            if (!data || !data.data || !data.data.positions || data.data.positions.length === 0) {
+                list.innerHTML = `
+                    <div style="color:#4a4a5a; text-align:center; padding:20px; font-size:13px;">
+                        <span style="display:block; font-size:24px; margin-bottom:8px;">📡</span>
+                        Ожидание данных телеметрии...
+                    </div>
+                `;
+                time.textContent = '—';
+                return;
+            }
+
+            const positions = data.data.positions.sort((a, b) => a.position - b.position);
+            let html = '';
+            positions.slice(0, 8).forEach(p => {
+                const driver = data.data.drivers?.find(d => d.driver_number === p.driver_number);
+                const name = driver ? driver.full_name?.split(' ').pop() || driver.full_name : '???';
+                const gap = p.gap_to_leader !== undefined ? `+${p.gap_to_leader.toFixed(1)}s` : 'LEADER';
+                const colors = ['#e50914', '#f59e0b', '#22c55e', '#3b82f6', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316'];
+                const color = colors[p.position - 1] || '#6a6a7a';
+
+                html += `
+                    <div class="telemetry-row">
+                        <span class="pos">${p.position}</span>
+                        <span class="color-bar" style="background:${color};"></span>
+                        <span class="driver">${name}</span>
+                        <span class="gap">${gap}</span>
+                    </div>
+                `;
+            });
+
+            list.innerHTML = html;
+            if (data.timestamp) {
+                time.textContent = new Date(data.timestamp).toLocaleTimeString();
+            }
+        }
+
+        function updateMap(data) {
+            const fallback = document.getElementById('mapFallback');
+            if (!fallback) return;
+
+            const positions = data?.data?.positions || [];
+            if (positions.length === 0) {
+                fallback.textContent = 'Ожидание данных';
+                return;
+            }
+
+            fallback.textContent = '';
+            const dots = document.querySelectorAll('.car-dot');
+            const sorted = positions.sort((a, b) => a.position - b.position);
+            dots.forEach((dot, i) => {
+                if (sorted[i]) {
+                    const x = 200 + (i * 150) % 600;
+                    const y = 100 + (i * 40) % 200;
+                    dot.setAttribute('cx', x);
+                    dot.setAttribute('cy', y);
+                }
+            });
+        }
+
+        async function refreshTelemetry() {
+            try {
+                const res = await fetch('/api/telemetry');
+                const data = await res.json();
+                if (data.status === 'ok' && data.data) {
+                    updateTelemetry(data.data);
+                    updateMap(data.data);
+                }
+            } catch (e) {
+                console.error('Refresh error:', e);
+            }
+        }
+
+        // ===== AI =====
+        async function generateCommentary() {
+            const textEl = document.getElementById('aiText');
+            if (!textEl) return;
+
+            textEl.textContent = '⏳ Генерация...';
+
+            try {
+                const res = await fetch('/api/ai/comment');
+                const data = await res.json();
+
+                if (data.status === 'ok' && data.commentary) {
+                    textEl.textContent = data.commentary;
+                } else {
+                    textEl.textContent = '⚠️ Нико пока молчит. Попробуйте позже.';
+                }
+            } catch (e) {
+                textEl.textContent = '⚠️ Ошибка соединения с AI.';
+            }
+        }
+
+        // ===== EXPORT =====
+        function exportData() {
+            fetch('/api/export')
+                .then(res => res.json())
+                .then(data => {
+                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `liberty_export_${new Date().toISOString().slice(0,10)}.json`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                })
+                .catch(() => alert('Ошибка экспорта'));
+        }
+
+        // ===== INIT =====
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!checkAuth()) {
+                document.getElementById('loginOverlay').classList.remove('hidden');
+            }
+
+            initPlayer();
+            connectWebSocket();
+
+            setInterval(refreshTelemetry, 5000);
+            setInterval(loadUsers, 30000);
+            setInterval(loadSources, 30000);
+        });
+    </script>
+
+</body>
+</html>
