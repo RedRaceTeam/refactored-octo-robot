@@ -653,6 +653,7 @@
             box-shadow: 0 4px 20px rgba(229, 9, 20, 0.3);
         }
 
+        /* ===== ADMIN ===== */
         .admin-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -778,84 +779,58 @@
         .admin-controls .btn { padding: 10px 24px; }
         .admin-controls .btn:hover { transform: scale(1.04); }
 
-        .login-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
+        /* ===== ADMIN LOGIN BAR ===== */
+        .admin-auth-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            background: #12121e;
+            border: 1px solid #22223a;
+            border-radius: 16px;
+            padding: 12px 20px;
+        }
+
+        .admin-auth-bar .info {
             display: flex;
             align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            animation: fade-in 0.3s ease;
+            gap: 12px;
+            font-size: 13px;
+            color: #7a7a8a;
         }
 
-        .login-overlay.hidden { display: none; }
-
-        @keyframes fade-in {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
-        }
-
-        .login-box {
-            background: #12121e;
-            border: 1px solid #2a2a3a;
-            border-radius: 20px;
-            padding: 40px;
-            width: 360px;
-            max-width: 90%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-        }
-
-        .login-box h2 {
-            font-size: 24px;
-            font-weight: 700;
-            color: #e50914;
-            margin-bottom: 8px;
-        }
-
-        .login-box .sub {
-            color: #6a6a7a;
-            font-size: 14px;
-            margin-bottom: 24px;
-        }
-
-        .login-box input {
-            width: 100%;
-            padding: 12px 16px;
-            background: #0e0e1a;
-            border: 1px solid #2a2a3a;
-            border-radius: 10px;
-            color: #e8e8f0;
-            font-size: 14px;
-            margin-bottom: 12px;
-            transition: border-color 0.3s ease;
-            outline: none;
-        }
-
-        .login-box input:focus {
-            border-color: #e50914;
-        }
-
-        .login-box input::placeholder {
+        .admin-auth-bar .info .status {
+            font-size: 12px;
             color: #4a4a5a;
         }
 
-        .login-box .error {
-            color: #e50914;
-            font-size: 13px;
-            margin-bottom: 12px;
-            min-height: 20px;
+        .admin-auth-bar .info .status.active {
+            color: #22c55e;
         }
 
-        .login-box .btn {
-            width: 100%;
-            padding: 12px;
-            font-size: 15px;
-            border-radius: 10px;
+        .admin-auth-bar .login-form {
+            display: flex;
+            gap: 8px;
+        }
+
+        .admin-auth-bar .login-form input {
+            padding: 6px 12px;
+            background: #0e0e1a;
+            border: 1px solid #2a2a3a;
+            border-radius: 8px;
+            color: #e8e8f0;
+            font-size: 13px;
+            outline: none;
+            width: 120px;
+        }
+
+        .admin-auth-bar .login-form input:focus {
+            border-color: #e50914;
+        }
+
+        .admin-auth-bar .login-form .btn {
+            padding: 6px 16px;
+            font-size: 13px;
         }
 
         .copyright {
@@ -883,6 +858,9 @@
             .telegram-widget { grid-column: 1; grid-row: auto; flex-direction: column; align-items: flex-start; }
             .admin-grid { grid-template-columns: 1fr 1fr; }
             .sidebar { width: 160px; padding: 16px; }
+            .admin-auth-bar { flex-direction: column; gap: 12px; align-items: stretch; }
+            .admin-auth-bar .login-form { flex-wrap: wrap; }
+            .admin-auth-bar .login-form input { flex: 1; }
         }
 
         @media (max-width: 640px) {
@@ -942,23 +920,11 @@
                 overflow-x: auto;
             }
             .admin-controls { flex-direction: column; }
-            .login-box { padding: 24px; }
+            .admin-auth-bar .login-form input { width: 100%; }
         }
     </style>
 </head>
 <body>
-
-    <!-- ===== LOGIN ===== -->
-    <div class="login-overlay" id="loginOverlay">
-        <div class="login-box">
-            <h2>🔐 Admin Access</h2>
-            <div class="sub">Введите логин и пароль</div>
-            <input type="text" id="loginUsername" placeholder="Логин" />
-            <input type="password" id="loginPassword" placeholder="Пароль" />
-            <div class="error" id="loginError"></div>
-            <button class="btn btn-primary" onclick="handleLogin()">Войти</button>
-        </div>
-    </div>
 
     <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar">
@@ -1093,84 +1059,104 @@
         <!-- ===== ADMIN PAGE ===== -->
         <div class="page" id="page-admin">
 
-            <div class="admin-grid">
-                <div class="admin-card">
-                    <div class="number" id="totalUsers">0</div>
-                    <div class="label">Total Users</div>
-                    <div class="trend">↑ active accounts</div>
+            <!-- ===== ADMIN AUTH BAR ===== -->
+            <div class="admin-auth-bar">
+                <div class="info">
+                    <span>🔐 Админ-панель</span>
+                    <span class="status" id="adminStatus">не авторизован</span>
                 </div>
-                <div class="admin-card">
-                    <div class="number" id="onlineUsers">0</div>
-                    <div class="label">Online Now</div>
-                    <div class="trend">↑ live connections</div>
+                <div class="login-form" id="adminLoginForm">
+                    <input type="text" id="adminUsername" placeholder="Логин" />
+                    <input type="password" id="adminPassword" placeholder="Пароль" />
+                    <button class="btn btn-primary" onclick="adminLogin()">Войти</button>
                 </div>
-                <div class="admin-card">
-                    <div class="number" id="uptimePercent">99%</div>
-                    <div class="label">Uptime</div>
-                    <div class="trend" style="color:#22c55e;">● operational</div>
+                <div id="adminLogout" style="display: none;">
+                    <button class="btn btn-secondary" onclick="adminLogout()">🚪 Выйти</button>
                 </div>
             </div>
 
-            <!-- ===== USERS MANAGEMENT ===== -->
-            <div class="admin-table">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-                    <h3 style="color:#7a7a8a; font-size:13px; text-transform:uppercase; letter-spacing:0.5px;">👤 Users</h3>
-                    <div style="display:flex; gap:8px;">
-                        <input type="text" id="userLoginInput" placeholder="Логин" style="padding:6px 12px; background:#0e0e1a; border:1px solid #2a2a3a; border-radius:8px; color:#e8e8f0; font-size:13px; outline:none;" />
-                        <input type="text" id="userPasswordInput" placeholder="Пароль" style="padding:6px 12px; background:#0e0e1a; border:1px solid #2a2a3a; border-radius:8px; color:#e8e8f0; font-size:13px; outline:none;" />
-                        <input type="text" id="userRoleInput" placeholder="Роль (user/admin)" style="padding:6px 12px; background:#0e0e1a; border:1px solid #2a2a3a; border-radius:8px; color:#e8e8f0; font-size:13px; outline:none;" />
-                        <button class="btn btn-primary" onclick="addUser()">+</button>
+            <!-- ===== ADMIN CONTENT ===== -->
+            <div id="adminContent" style="display: none;">
+
+                <div class="admin-grid">
+                    <div class="admin-card">
+                        <div class="number" id="totalUsers">0</div>
+                        <div class="label">Total Users</div>
+                        <div class="trend">↑ active accounts</div>
+                    </div>
+                    <div class="admin-card">
+                        <div class="number" id="onlineUsers">0</div>
+                        <div class="label">Online Now</div>
+                        <div class="trend">↑ live connections</div>
+                    </div>
+                    <div class="admin-card">
+                        <div class="number" id="uptimePercent">99%</div>
+                        <div class="label">Uptime</div>
+                        <div class="trend" style="color:#22c55e;">● operational</div>
                     </div>
                 </div>
-                <div id="usersList">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Username</th>
-                                <th>Role</th>
-                                <th>Status</th>
-                                <th>Last Activity</th>
-                                <th>Действия</th>
-                            </tr>
-                        </thead>
-                        <tbody id="usersTableBody">
-                            <tr><td colspan="5" style="text-align:center; color:#4a4a5a; padding:20px;">Загрузка пользователей...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
 
-            <!-- ===== SOURCES ===== -->
-            <div class="admin-table">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-                    <h3 style="color:#7a7a8a; font-size:13px; text-transform:uppercase; letter-spacing:0.5px;">🎥 Video Sources</h3>
-                    <div style="display:flex; gap:8px;">
-                        <input type="text" id="sourceNameInput" placeholder="Название" style="padding:6px 12px; background:#0e0e1a; border:1px solid #2a2a3a; border-radius:8px; color:#e8e8f0; font-size:13px; outline:none;" />
-                        <input type="text" id="sourceUrlInput" placeholder="URL" style="padding:6px 12px; background:#0e0e1a; border:1px solid #2a2a3a; border-radius:8px; color:#e8e8f0; font-size:13px; outline:none; width:300px;" />
-                        <button class="btn btn-primary" onclick="addSource()">+</button>
+                <!-- ===== USERS ===== -->
+                <div class="admin-table">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                        <h3 style="color:#7a7a8a; font-size:13px; text-transform:uppercase; letter-spacing:0.5px;">👤 Users</h3>
+                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                            <input type="text" id="userLoginInput" placeholder="Логин" style="padding:6px 12px; background:#0e0e1a; border:1px solid #2a2a3a; border-radius:8px; color:#e8e8f0; font-size:13px; outline:none;" />
+                            <input type="text" id="userPasswordInput" placeholder="Пароль" style="padding:6px 12px; background:#0e0e1a; border:1px solid #2a2a3a; border-radius:8px; color:#e8e8f0; font-size:13px; outline:none;" />
+                            <input type="text" id="userRoleInput" placeholder="Роль" style="padding:6px 12px; background:#0e0e1a; border:1px solid #2a2a3a; border-radius:8px; color:#e8e8f0; font-size:13px; outline:none; width:80px;" />
+                            <button class="btn btn-primary" onclick="addUser()">+</button>
+                        </div>
+                    </div>
+                    <div id="usersList">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Last Activity</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr><td colspan="5" style="text-align:center; color:#4a4a5a; padding:20px;">Войдите для просмотра</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <div id="sourcesList">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Название</th>
-                                <th>URL</th>
-                                <th>Активный</th>
-                                <th>Действия</th>
-                            </tr>
-                        </thead>
-                        <tbody id="sourcesTableBody">
-                            <tr><td colspan="4" style="text-align:center; color:#4a4a5a; padding:20px;">Загрузка источников...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
 
-            <div class="admin-controls">
-                <button class="btn btn-primary" onclick="refreshTelemetry()">🔄 Refresh Data</button>
-                <button class="btn btn-secondary" onclick="exportData()">📤 Export Logs</button>
-                <button class="btn btn-secondary" onclick="logout()">🚪 Logout</button>
+                <!-- ===== SOURCES ===== -->
+                <div class="admin-table">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                        <h3 style="color:#7a7a8a; font-size:13px; text-transform:uppercase; letter-spacing:0.5px;">🎥 Video Sources</h3>
+                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                            <input type="text" id="sourceNameInput" placeholder="Название" style="padding:6px 12px; background:#0e0e1a; border:1px solid #2a2a3a; border-radius:8px; color:#e8e8f0; font-size:13px; outline:none;" />
+                            <input type="text" id="sourceUrlInput" placeholder="URL" style="padding:6px 12px; background:#0e0e1a; border:1px solid #2a2a3a; border-radius:8px; color:#e8e8f0; font-size:13px; outline:none; width:300px;" />
+                            <button class="btn btn-primary" onclick="addSource()">+</button>
+                        </div>
+                    </div>
+                    <div id="sourcesList">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Название</th>
+                                    <th>URL</th>
+                                    <th>Активный</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sourcesTableBody">
+                                <tr><td colspan="4" style="text-align:center; color:#4a4a5a; padding:20px;">Войдите для просмотра</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="admin-controls">
+                    <button class="btn btn-primary" onclick="refreshTelemetry()">🔄 Refresh Data</button>
+                    <button class="btn btn-secondary" onclick="exportData()">📤 Export Logs</button>
+                </div>
+
             </div>
 
         </div>
@@ -1235,67 +1221,61 @@
             }
         };
 
-        // ===== AUTH =====
-        let currentUser = null;
+        // ===== ADMIN AUTH =====
+        let adminLoggedIn = false;
 
-        async function handleLogin() {
-            const username = document.getElementById('loginUsername').value;
-            const password = document.getElementById('loginPassword').value;
-            const errorEl = document.getElementById('loginError');
+        async function adminLogin() {
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
 
             if (!username || !password) {
-                errorEl.textContent = 'Введите логин и пароль';
+                alert('Введите логин и пароль');
                 return;
             }
 
             try {
-                const result = await API.login(username, password);
-                if (result.status === 'ok') {
-                    currentUser = result.user;
-                    sessionStorage.setItem('liberty_user', JSON.stringify(currentUser));
-                    document.getElementById('loginOverlay').classList.add('hidden');
-                    errorEl.textContent = '';
-                    document.getElementById('loginUsername').value = '';
-                    document.getElementById('loginPassword').value = '';
+                const res = await API.login(username, password);
+                const data = await res;
+
+                if (data.status === 'ok') {
+                    adminLoggedIn = true;
+                    document.getElementById('adminStatus').textContent = '✅ авторизован';
+                    document.getElementById('adminStatus').className = 'status active';
+                    document.getElementById('adminLoginForm').style.display = 'none';
+                    document.getElementById('adminLogout').style.display = 'block';
+                    document.getElementById('adminContent').style.display = 'block';
+                    document.getElementById('adminUsername').value = '';
+                    document.getElementById('adminPassword').value = '';
                     loadAllData();
                 } else {
-                    errorEl.textContent = result.message || 'Неверный логин или пароль';
+                    alert(data.message || 'Неверный логин или пароль');
                 }
             } catch (e) {
-                errorEl.textContent = 'Ошибка соединения';
+                alert('Ошибка соединения');
             }
         }
 
-        document.getElementById('loginPassword').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') handleLogin();
-        });
-        document.getElementById('loginUsername').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') handleLogin();
-        });
-
-        function checkAuth() {
-            const saved = sessionStorage.getItem('liberty_user');
-            if (saved) {
-                try {
-                    currentUser = JSON.parse(saved);
-                    document.getElementById('loginOverlay').classList.add('hidden');
-                    loadAllData();
-                    return true;
-                } catch (e) {
-                    sessionStorage.removeItem('liberty_user');
-                }
-            }
-            return false;
+        function adminLogout() {
+            adminLoggedIn = false;
+            document.getElementById('adminStatus').textContent = 'не авторизован';
+            document.getElementById('adminStatus').className = 'status';
+            document.getElementById('adminLoginForm').style.display = 'flex';
+            document.getElementById('adminLogout').style.display = 'none';
+            document.getElementById('adminContent').style.display = 'none';
+            document.getElementById('usersTableBody').innerHTML = '<tr><td colspan="5" style="text-align:center; color:#4a4a5a; padding:20px;">Войдите для просмотра</td></tr>';
+            document.getElementById('sourcesTableBody').innerHTML = '<tr><td colspan="4" style="text-align:center; color:#4a4a5a; padding:20px;">Войдите для просмотра</td></tr>';
         }
 
-        function logout() {
-            sessionStorage.removeItem('liberty_user');
-            currentUser = null;
-            document.getElementById('loginOverlay').classList.remove('hidden');
-        }
+        document.getElementById('adminPassword').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') adminLogin();
+        });
+        document.getElementById('adminUsername').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') adminLogin();
+        });
 
         // ===== LOAD DATA =====
         async function loadAllData() {
+            if (!adminLoggedIn) return;
             await loadUsers();
             await loadSources();
             await loadSession();
@@ -1322,15 +1302,14 @@
                 data.users.forEach(user => {
                     const statusClass = user.status === 'active' ? 'green' : user.status === 'idle' ? 'yellow' : 'red';
                     const statusText = user.status === 'active' ? 'Active' : user.status === 'idle' ? 'Idle' : 'Offline';
-                    const isCurrent = user.username === currentUser?.username;
                     html += `
                         <tr>
-                            <td>${user.username} ${isCurrent ? '👑' : ''}</td>
+                            <td>${user.username}</td>
                             <td>${user.role}</td>
                             <td><span class="status-badge ${statusClass}">${statusText}</span></td>
                             <td>${user.lastActivity || '—'}</td>
                             <td>
-                                ${!isCurrent ? `<button class="btn btn-secondary" style="padding:4px 12px; font-size:12px;" onclick="deleteUser('${user.username}')">🗑️</button>` : ''}
+                                <button class="btn btn-secondary" style="padding:4px 12px; font-size:12px;" onclick="deleteUser('${user.username}')">🗑️</button>
                             </td>
                         </tr>
                     `;
@@ -1430,7 +1409,6 @@
             try {
                 await API.setActiveSource(id);
                 await loadSources();
-                // Обновляем плеер
                 const sources = await API.getSources();
                 const active = sources.sources.find(s => s.active);
                 if (active && player) {
@@ -1633,18 +1611,64 @@
                 .catch(() => alert('Ошибка экспорта'));
         }
 
+        // ===== DROPDOWN NAV =====
+        const toggle = document.getElementById('navToggle');
+        const menu = document.getElementById('navMenu');
+        const currentPage = document.getElementById('currentPage');
+
+        toggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggle.classList.toggle('active');
+            menu.classList.toggle('active');
+        });
+
+        document.addEventListener('click', () => {
+            toggle.classList.remove('active');
+            menu.classList.remove('active');
+        });
+
+        // ===== PAGE SWITCH =====
+        const navItems = menu.querySelectorAll('li');
+        const pages = {
+            dashboard: document.getElementById('page-dashboard'),
+            admin: document.getElementById('page-admin')
+        };
+        const pageTitle = document.getElementById('pageTitle');
+
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const page = item.dataset.page;
+                if (!page || !pages[page]) return;
+
+                navItems.forEach(li => li.classList.remove('active'));
+                item.classList.add('active');
+                currentPage.textContent = item.textContent;
+
+                Object.values(pages).forEach(p => p.classList.remove('active'));
+                pages[page].classList.add('active');
+
+                if (page === 'dashboard') {
+                    pageTitle.innerHTML = 'Dashboard <span>· overview</span>';
+                } else if (page === 'admin') {
+                    pageTitle.innerHTML = 'Admin Panel <span>· system control</span>';
+                }
+
+                toggle.classList.remove('active');
+                menu.classList.remove('active');
+            });
+        });
+
         // ===== INIT =====
         document.addEventListener('DOMContentLoaded', () => {
-            if (!checkAuth()) {
-                document.getElementById('loginOverlay').classList.remove('hidden');
-            }
-
             initPlayer();
             connectWebSocket();
 
             setInterval(refreshTelemetry, 5000);
-            setInterval(loadUsers, 30000);
-            setInterval(loadSources, 30000);
+
+            // Проверяем, есть ли уже сессия админа
+            if (adminLoggedIn) {
+                loadAllData();
+            }
         });
     </script>
 
